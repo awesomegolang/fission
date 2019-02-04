@@ -537,7 +537,7 @@ func (envw *environmentWatcher) createBuilderDeployment(env *crd.Environment, ns
 						},
 					},
 					Containers: []apiv1.Container{
-						fission.MergeContainerSpecs(&apiv1.Container{
+						&apiv1.Container{
 							Name:                   "builder",
 							Image:                  env.Spec.Builder.Image,
 							ImagePullPolicy:        envw.builderImagePullPolicy,
@@ -570,7 +570,7 @@ func (envw *environmentWatcher) createBuilderDeployment(env *crd.Environment, ns
 									},
 								},
 							},
-						}, env.Spec.Builder.Container),
+						},
 						{
 							Name:                   "fetcher",
 							Image:                  envw.fetcherImage,

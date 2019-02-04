@@ -409,7 +409,7 @@ func (gp *GenericPool) createPool() error {
 					Labels:      gp.labelsForPool,
 					Annotations: podAnnotations,
 				},
-				Spec: apiv1.PodSpec{
+				Spec: fission.MergePodSpecs(&apiv1.PodSpec{
 					Volumes: []apiv1.Volume{
 						{
 							Name: fission.SharedVolumeUserfunc,
@@ -430,8 +430,7 @@ func (gp *GenericPool) createPool() error {
 							},
 						},
 					},
-					Containers: []apiv1.Container{
-						fission.MergeContainerSpecs(&apiv1.Container{
+					Containers: []apiv1.Container{&apiv1.Container{
 							Name:                   gp.env.Metadata.Name,
 							Image:                  gp.env.Spec.Runtime.Image,
 							ImagePullPolicy:        gp.runtimeImagePullPolicy,
@@ -467,7 +466,8 @@ func (gp *GenericPool) createPool() error {
 									},
 								},
 							},
-						}, gp.env.Spec.Runtime.Container),
+						},
+					},
 						{
 							Name:                   "fetcher",
 							Image:                  gp.fetcherImage,
@@ -543,7 +543,7 @@ func (gp *GenericPool) createPool() error {
 					// sleep time of preStop to make sure that SIGTERM is sent
 					// to pod after 6 mins.
 					TerminationGracePeriodSeconds: &gracePeriodSeconds,
-				},
+				}, gp.env.Spec.Runtime.PodSpec),
 			},
 		},
 	}
