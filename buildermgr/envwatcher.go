@@ -515,7 +515,7 @@ func (envw *environmentWatcher) createBuilderDeployment(env *crd.Environment, ns
 					Labels:      sel,
 					Annotations: podAnnotations,
 				},
-				Spec: apiv1.PodSpec{
+				Spec: fission.MergePodSpecs(&apiv1.PodSpec{
 					Volumes: []apiv1.Volume{
 						{
 							Name: fission.SharedVolumePackages,
@@ -537,7 +537,7 @@ func (envw *environmentWatcher) createBuilderDeployment(env *crd.Environment, ns
 						},
 					},
 					Containers: []apiv1.Container{
-						&apiv1.Container{
+						fission.MergeContainerSpecs(&apiv1.Container{
 							Name:                   "builder",
 							Image:                  env.Spec.Builder.Image,
 							ImagePullPolicy:        envw.builderImagePullPolicy,
@@ -570,7 +570,7 @@ func (envw *environmentWatcher) createBuilderDeployment(env *crd.Environment, ns
 									},
 								},
 							},
-						},
+						}, env.Spec.Builder.Container),
 						{
 							Name:                   "fetcher",
 							Image:                  envw.fetcherImage,
@@ -611,7 +611,7 @@ func (envw *environmentWatcher) createBuilderDeployment(env *crd.Environment, ns
 						},
 					},
 					ServiceAccountName: "fission-builder",
-				},
+				}, env.Spec.Runtime.PodSpec),
 			},
 		},
 	}

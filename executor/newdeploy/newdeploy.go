@@ -216,7 +216,7 @@ func (deploy *NewDeploy) getDeploymentSpec(fn *crd.Function, env *crd.Environmen
 					Labels:      deployLabels,
 					Annotations: podAnnotations,
 				},
-				Spec: apiv1.PodSpec{
+				Spec: fission.MergePodSpecs(&apiv1.PodSpec{
 					Volumes: []apiv1.Volume{
 						{
 							Name: fission.SharedVolumeUserfunc,
@@ -336,7 +336,7 @@ func (deploy *NewDeploy) getDeploymentSpec(fn *crd.Function, env *crd.Environmen
 					},
 					ServiceAccountName:            "fission-fetcher",
 					TerminationGracePeriodSeconds: &gracePeriodSeconds,
-				},
+				}, env.Spec.Runtime.PodSpec),
 			},
 		},
 	}
